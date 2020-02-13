@@ -46,7 +46,7 @@ default_params = {
     'results_path': 'results',
     'epoch_limit': 1000,
     'resume': True,
-    'sample_rate': 16000,
+    'sample_rate': 44100,
     'n_samples': 1,
     'sample_length': 80000,
     'loss_smoothing': 0.99,
@@ -59,6 +59,7 @@ tag_params = [
     'batch_size', 'dataset', 'val_frac', 'test_frac'
 ]
 
+
 def param_to_string(value):
     if isinstance(value, bool):
         return 'T' if value else 'F'
@@ -67,12 +68,14 @@ def param_to_string(value):
     else:
         return str(value)
 
+
 def make_tag(params):
     return '-'.join(
         key + ':' + param_to_string(params[key])
         for key in tag_params
         if key not in default_params or params[key] != default_params[key]
     )
+
 
 def setup_results_dir(params):
     def ensure_dir_exists(path):
@@ -94,6 +97,7 @@ def setup_results_dir(params):
 
     return results_path
 
+
 def load_last_checkpoint(checkpoints_path):
     checkpoints_pattern = os.path.join(
         checkpoints_path, SaverPlugin.last_pattern.format('*', '*')
@@ -112,6 +116,7 @@ def load_last_checkpoint(checkpoints_path):
     else:
         return None
 
+
 def tee_stdout(log_path):
     log_file = open(log_path, 'a', 1)
     stdout = sys.stdout
@@ -128,8 +133,10 @@ def tee_stdout(log_path):
 
     sys.stdout = Tee()
 
+
 def make_data_loader(overlap_len, params):
     path = os.path.join(params['datasets_path'], params['dataset'])
+
     def data_loader(split_from, split_to, eval):
         dataset = FolderDataset(
             path, overlap_len, params['q_levels'], split_from, split_to
@@ -143,6 +150,7 @@ def make_data_loader(overlap_len, params):
             drop_last=(not eval)
         )
     return data_loader
+
 
 def init_comet(params, trainer):
     if params['comet_key'] is not None:
@@ -160,6 +168,7 @@ def init_comet(params, trainer):
                 'test_loss'
             ]
         ))
+
 
 def main(exp, frame_sizes, dataset, **params):
     params = dict(

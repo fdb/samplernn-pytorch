@@ -16,7 +16,7 @@ youtube-dl $url -f $format -o $downloaded
 
 converted=".temp2.wav"
 rm -f $converted
-ffmpeg -i $downloaded -ac 1 -ab 16k -ar 16000 $converted
+ffmpeg -i $downloaded -ac 1 -ar 44100 $converted
 rm -f $downloaded
 
 mkdir $dataset_path
